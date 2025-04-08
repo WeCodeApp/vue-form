@@ -1,10 +1,13 @@
 <template>
-    <form>
+    <form @submit.prevent="handleSubmit">
         <label for="email">Email</label>
         <input type="text" required v-model="email">
 
         <label for="password">Password</label>
         <input type="password" required v-model="password">
+        <div v-if="passwordError" class="error">
+            {{ passwordError }}
+        </div>
 
         <label for="role">Role</label>
         <select v-model="role">
@@ -18,10 +21,14 @@
         </div>
         
         <label for="skills">Skills</label>
-        <input type="text" required v-model="tempSkill" @keyup="addSkill">
-        <div v-for="skill in skills" :key="skill" class="pill" @click="">
+        <input type="text" v-model="tempSkill" @keyup="addSkill">
+        <div v-for="skill in skills" :key="skill" class="pill" @click="deleteSkill(skill)">
             <span>{{ skill }}</span>
         </div>
+
+        <button class="submit">
+            Submit
+        </button>
     </form>
         
     <p> Email: {{ email }}</p>
@@ -39,18 +46,28 @@
                 role: 'developer',
                 terms: false,
                 tempSkill: '',
-                skills: []
+                skills: [],
+                passwordError: ''
             }
         },
         methods: {
             addSkill(e) {
-                console.log(e)
                 if (e.key === 'Enter') {
                     if (!this.skills.includes(this.tempSkill)){
                         this.skills.push(this.tempSkill)
                     }
                     this.tempSkill = ''
                 }
+            },
+            deleteSkill(skill) {
+                this.skills = this.skills.filter(item => {
+                    return skill != item
+                })
+            },
+            handleSubmit() {
+                this.passwordError = this.password.length > 6 ? 
+                '' : 'Password needs to be atleast 6 characters'
+                
             }
         }
     }
@@ -106,6 +123,25 @@ input[type="checkbox"] {
     font-weight: bold;
     color: #777;
     cursor: pointer;
+}
+
+button {
+    background: #0b6dff;
+    border: 0;
+    padding: 10px 20px;
+    margin-top: 20px;
+    color: white;
+    border-radius: 20px;
+}
+.submit {
+    text-align: center;
+}
+
+.error {
+    color: #ff0062;
+    margin-top: 10px;
+    font-size: 0.8em;
+    font-weight: bold;
 }
 
 </style>
